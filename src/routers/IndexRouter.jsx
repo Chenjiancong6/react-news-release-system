@@ -4,12 +4,19 @@ import React, { Fragment } from "react"
 import { Route, Redirect, Switch } from "react-router-dom"
 import Login from "../pages/Login"
 
+import NewsSandBox from "../pages/NewsSandBox"
+
 export default function IndexRouter() {
     return (
         <Fragment>
             <Switch>
                 <Route path="/login" component={Login} />
-                <Redirect to="/login"></Redirect>
+                <Route path="/" render={() =>
+                    localStorage.getItem("token") ?
+                        <NewsSandBox></NewsSandBox> :
+                        <NewsSandBox></NewsSandBox>
+                }></Route>
+                {/* <Redirect to="/login"></Redirect> */}
             </Switch>
         </Fragment>
     )
