@@ -1,4 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react'
+// withRouter作用是将一个组件包裹进Route里面, 然后react-router的三个对象history, location, match就会被放进这个组件的props属性中
+import { NavLink, withRouter } from 'react-router-dom'
 import {
     MenuFoldOutlined,
     MenuUnfoldOutlined,
@@ -6,42 +8,70 @@ import {
     UserOutlined,
     VideoCameraOutlined,
 } from '@ant-design/icons';
+import axios from 'axios'
 import { Layout, Menu, theme } from 'antd';
 import './index.css'
 
 const { Header, Sider, Content } = Layout;
+const { SubMenu } = Menu;
 
-export default function SideMenu() {
+function SideMenu(props) {
+    //获取当前url中的keys值，传入Menu中，作为选中/展开条件
+    const selectKeys = [props.location.pathname] //加上[]是为了让他们成为数组传入
+
+    // 刷新页面后还没打开页面已选中的菜单
+    const openKeys = ["/" + props.location.pathname.split("/")[1]]
+
     const [collapsed, setCollapsed] = useState(false);
-    // const {
-    //     token: { colorBgContainer },
-    // } = theme.useToken();
+    const [menuList, setMenuList] = useState([])
+
+    // 进行表关联，请求数据； 加上[]，只在页面渲染完后请求一次
+    useEffect(() => {
+        axios.get('/rights?_embed=children').then(res => {
+            setMenuList(res?.data)
+        })
+    }, [])
+
+    //根据数据遍历列表
+    const decision = (item) => {
+        // pagepermisson 侧边栏页面权限
+        return item.pagepermisson === 1
+    }
+
+    // 遍历循环生成一二级菜单
+    const menuRender = (menuList) => {
+        return menuList?.map(item => {
+            // 如果有二级菜单
+            if (item.children?.length > 0 && decision(item)) {
+                return (
+                    <SubMenu key={item.key} title={item.title}>
+                        {/* 如果是二级列表，调用递归 */}
+                        {menuRender(item.children)}
+                    </SubMenu>
+                )
+            }
+            // 可以点击的菜单
+            return decision(item) &&
+                <Menu.Item key={item.key}>
+                    <NavLink to={item.key}>{item.title}</NavLink>
+                </Menu.Item>
+        })
+    }
+
 
     return (
-        <Sider trigger={null} collapsible collapsed={collapsed}>
-            <div className="logo" />
-            <Menu
-                theme="dark"
-                mode="inline"
-                defaultSelectedKeys={['1']}
-                items={[
-                    {
-                        key: '1',
-                        icon: <UserOutlined />,
-                        label: 'nav 1',
-                    },
-                    {
-                        key: '2',
-                        icon: <VideoCameraOutlined />,
-                        label: 'nav 2',
-                    },
-                    {
-                        key: '3',
-                        icon: <UploadOutlined />,
-                        label: 'nav 3',
-                    },
-                ]}
-            />
+        <Sider trigger={null} collapsible>
+            <div style={{ display: 'flex', height: "100%", flexDirection: "column" }}>
+                <div className="logo">新闻</div>
+                <div style={{ flex: 1, overflow: "hidden" }}>
+                    <Menu theme="dark" mode="inline" selectedKeys={selectKeys} defaultOpenKeys={openKeys}>
+                        {/* 封装函数遍历生成菜单项 */}
+                        {menuRender(menuList)}
+                    </Menu>
+                </div>
+            </div>
         </Sider>
     )
 }
+
+export default withRouter(SideMenu)
