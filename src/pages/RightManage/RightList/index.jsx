@@ -96,9 +96,9 @@ export default function RightList() {
      */
     const changeSwitchCheck = (item) => {
         // 取反
-        item.pagepermisson = item.pagepermisson == 1 ? 0 : 1;
+        item.pagepermisson = item.pagepermisson === 1 ? 0 : 1;
 
-        if (item.grade == 1) {
+        if (item.grade === 1) {
             axios.patch(`/rights/${item.id}`, {
                 pagepermisson: item.pagepermisson
             }).then(() => {
