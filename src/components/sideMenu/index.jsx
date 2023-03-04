@@ -1,19 +1,30 @@
 import React, { useState, useEffect } from 'react'
 // withRouter作用是将一个组件包裹进Route里面, 然后react-router的三个对象history, location, match就会被放进这个组件的props属性中
 import { NavLink, withRouter } from 'react-router-dom'
-import {
-    MenuFoldOutlined,
-    MenuUnfoldOutlined,
-    UploadOutlined,
-    UserOutlined,
-    VideoCameraOutlined,
-} from '@ant-design/icons';
 import axios from 'axios'
-import { Layout, Menu, theme } from 'antd';
+import { Layout, Menu } from 'antd';
 import './index.css'
-
-const { Header, Sider, Content } = Layout;
+import {
+    UserOutlined,
+    HomeOutlined,
+    ControlOutlined,
+    SoundOutlined,
+    AuditOutlined,
+    SmileOutlined
+} from '@ant-design/icons';
+// 要在图标后导入
+const { Sider } = Layout;
 const { SubMenu } = Menu;
+
+// 图标映射
+const iconList = {
+    "/home": <HomeOutlined />,
+    "/user-manage": <UserOutlined />,
+    "/right-manage": <ControlOutlined />,
+    "/news-manage": <SoundOutlined />,
+    "/audit-manage": <AuditOutlined />,
+    "/publish-manage": <SmileOutlined />
+}
 
 function SideMenu(props) {
     //获取当前url中的keys值，传入Menu中，作为选中/展开条件
@@ -44,7 +55,7 @@ function SideMenu(props) {
             // 如果有二级菜单
             if (item.children?.length > 0 && decision(item)) {
                 return (
-                    <SubMenu key={item.key} title={item.title}>
+                    <SubMenu key={item.key} title={item.title} icon={iconList[item.key]}>
                         {/* 如果是二级列表，调用递归 */}
                         {menuRender(item.children)}
                     </SubMenu>
@@ -52,7 +63,7 @@ function SideMenu(props) {
             }
             // 可以点击的菜单
             return decision(item) &&
-                <Menu.Item key={item.key}>
+                <Menu.Item key={item.key} icon={iconList[item.key]}>
                     <NavLink to={item.key}>{item.title}</NavLink>
                 </Menu.Item>
         })
