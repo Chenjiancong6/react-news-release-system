@@ -16,8 +16,13 @@ const UserManage = () => {
     const [currentUser, setCurrentUser] = useState(null) // 拿到当前用户的数据
 
     useEffect(() => {
+        const saveCurrentUser = JSON.parse(localStorage.getItem("token"))
         axios.get('/users?_expand=role').then(res => {
-            setDataSource(res.data)
+            const { data } = res
+            setDataSource(saveCurrentUser.roleId === 1 ? data : [
+                ...data.filter(item => item.username === saveCurrentUser.username),
+                ...data.filter(item => item.region === saveCurrentUser.region && item.roleId === 3)
+            ])
         });
         axios.get("/regions").then((res) => {
             setRegionsList(res.data)

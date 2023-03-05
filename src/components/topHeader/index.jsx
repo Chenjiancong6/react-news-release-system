@@ -13,6 +13,7 @@ const { Header, Sider, Content } = Layout;
 
 
 export default function TopHeader() {
+    const currentUser = JSON.parse(localStorage.getItem("token"))
     const [collapsed, setCollapsed] = useState(false);
     // const {
     //     token: { colorBgContainer },

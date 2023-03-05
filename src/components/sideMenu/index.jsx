@@ -36,6 +36,8 @@ function SideMenu(props) {
     const [collapsed, setCollapsed] = useState(false);
     const [menuList, setMenuList] = useState([])
 
+    const currentUser = JSON.parse(localStorage.getItem("token"))
+
     // 进行表关联，请求数据； 加上[]，只在页面渲染完后请求一次
     useEffect(() => {
         axios.get('/rights?_embed=children').then(res => {
@@ -46,7 +48,7 @@ function SideMenu(props) {
     //根据数据遍历列表
     const decision = (item) => {
         // pagepermisson 侧边栏页面权限
-        return item.pagepermisson === 1
+        return item.pagepermisson === 1 && (currentUser.role.rights).includes(item.key)
     }
 
     // 遍历循环生成一二级菜单
