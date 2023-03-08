@@ -17,6 +17,7 @@ const UserManage = () => {
 
     useEffect(() => {
         const saveCurrentUser = JSON.parse(localStorage.getItem("token"))
+        // 接口请求
         axios.get('/users?_expand=role').then(res => {
             const { data } = res
             setDataSource(saveCurrentUser.roleId === 1 ? data : [
@@ -24,14 +25,16 @@ const UserManage = () => {
                 ...data.filter(item => item.region === saveCurrentUser.region && item.roleId === 3)
             ])
         });
+
         axios.get("/regions").then((res) => {
             setRegionsList(res.data)
+        });
+
+        axios.get("/roles").then((res) => {
+            setRolesList(res.data)
         })
     }, []);
-    // 用户的角色
-    axios.get("/roles").then((res) => {
-        setRolesList(res.data)
-    })
+
 
     const columns = [
         {

@@ -37,8 +37,7 @@ const routerList = {
 }
 
 
-function NewsRouter() {
-
+function NewsRouter(props) {
     const saveUser = JSON.parse(localStorage.getItem("token"))
     const [saveRouterList, setSaveRouterList] = useState([])
 
@@ -61,21 +60,26 @@ function NewsRouter() {
         return saveUser.role.rights.includes(item.key)
     }
     return (
-        <Switch>
-            {
-                saveRouterList?.map(item => {
-                    if (checkRouter(item) && checkUserRights(item)) {
-                        return <Route path={item.key} key={item.key} component={routerList[item.key]} exact />
-                    }
-                    return null;
-                })
-            }
-            <Redirect path="/" to="/home" exact />
-            {
-                saveRouterList.length > 0 && <Route path="*" component={Nopermission} />
-            }
-        </Switch>
+        <Spin tip="Loading..." size="large" spinning={props.switch}>
+            <Switch>
+                {
+                    saveRouterList?.map(item => {
+                        if (checkRouter(item) && checkUserRights(item)) {
+                            return <Route path={item.key} key={item.key} component={routerList[item.key]} exact />
+                        }
+                        return null;
+                    })
+                }
+                <Redirect path="/" to="/home" exact />
+                {
+                    saveRouterList.length > 0 && <Route path="*" component={Nopermission} />
+                }
+            </Switch>
+        </Spin>
     )
 }
 
-export default NewsRouter;
+export default connect(
+    state => ({ switch: state.loadingReducers }),
+    {}
+)(NewsRouter);

@@ -1,5 +1,6 @@
-import {createStore} from 'redux'
+import { createStore } from 'redux'
 import reducers from './reducers'
+//redux 持久化
 import { persistStore, persistReducer } from 'redux-persist'
 import storage from 'redux-persist/lib/storage' // defaults to localStorage for web
 
@@ -10,7 +11,7 @@ const persistConfig = {
     whitelist: ['isCollapsedReducers'] // 白名单
 }
 
-const persistedReducer = persistReducer(persistConfig,reducers)
+const persistedReducer = persistReducer(persistConfig, reducers)
 
-export  let store = createStore(persistedReducer)
-export  let persistor = persistStore(store)
+export let store = createStore(persistedReducer)
+export let persistor = persistStore(store)
